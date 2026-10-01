@@ -1,0 +1,6 @@
+{
+  "name": "SchemeGuide AI",
+  "description": "AI-powered government scheme analyzer. Upload any scheme poster, document, or PDF to get instant simplified breakdowns, benefits, required documents, and interactive multi-language eligibility checks.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

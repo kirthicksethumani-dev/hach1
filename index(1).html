@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchemeGuide AI - Government Scheme Analyzer & Eligibility Assistant</title>
+  <meta name="description" content="AI-powered government scheme analyzer. Upload any scheme poster, document, or PDF to get instant simplified breakdowns, benefits, required documents, and interactive multi-language eligibility checks.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="brand">
+        <div class="logo-icon">🛡️</div>
+        <div>
+          <div class="logo-title">SchemeGuide <span class="accent">AI</span></div>
+          <div class="logo-sub">Citizen Welfare &amp; Multilingual Eligibility Assistant</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <select id="languageSelect" class="lang-picker" aria-label="Select Language">
+          <option value="en">English (English)</option>
+          <option value="ta">Tamil (தமிழ்)</option>
+          <option value="hi">Hindi (हिन्दी)</option>
+          <option value="te">Telugu (తెలుగు)</option>
+          <option value="ml">Malayalam (മലയാളം)</option>
+          <option value="kn">Kannada (ಕನ್ನಡ)</option>
+        </select>
+        <button id="backendConfigBtn" class="btn btn-secondary btn-sm" title="Configure AI Backend API Endpoint">⚙️ Backend</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <span class="badge">Digital India &amp; Citizen Empowerment</span>
+      <h1>Simplifying Government Schemes for <span class="gradient-text">Every Citizen</span></h1>
+      <p class="hero-desc">Upload any official scheme poster, circular, or PDF flyer. SchemeGuide AI extracts benefits, explains terms in simple citizen language, and checks your eligibility instantly.</p>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="card upload-card">
+      <div class="card-header-flex">
+        <div>
+          <h2>Upload Scheme Document</h2>
+          <p class="subtext">Upload a poster photo, announcement banner, or PDF circular.</p>
+        </div>
+      </div>
+
+      <!-- Quick Preset Schemes -->
+      <div class="preset-box">
+        <div class="preset-title">⚡ Or test instantly with popular official schemes:</div>
+        <div class="preset-grid">
+          <button class="preset-btn" data-preset="pm-kisan">
+            <strong>PM-Kisan Samman Nidhi</strong>
+            <span>₹6,000/yr Direct Farmer Support</span>
+          </button>
+          <button class="preset-btn" data-preset="ayushman-bharat">
+            <strong>Ayushman Bharat (PM-JAY)</strong>
+            <span>₹5 Lakhs Free Health Cover</span>
+          </button>
+          <button class="preset-btn" data-preset="mudra-yojana">
+            <strong>PM Mudra Yojana</strong>
+            <span>Collateral-Free Loan up to ₹20L</span>
+          </button>
+          <button class="preset-btn" data-preset="sukanya-samriddhi">
+            <strong>Sukanya Samriddhi Yojana</strong>
+            <span>8.2% Interest Girl Child Scheme</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dropzone -->
+      <div id="dropZone" class="dropzone">
+        <input type="file" id="fileInput" accept="image/*,application/pdf" style="display:none">
+        <div class="upload-icon">📄</div>
+        <p><strong>Click to browse</strong> or drag and drop scheme poster / PDF</p>
+        <div class="file-badges">
+          <span>PNG / JPG</span>
+          <span>Official PDF</span>
+          <span>Multi-Language Ready</span>
+        </div>
+      </div>
+
+      <!-- File preview container -->
+      <div id="filePreview" class="file-preview" style="display:none">
+        <div class="file-info">
+          <span id="fileName" class="file-name">document.png</span>
+          <span id="fileSize" class="file-size">240 KB</span>
+        </div>
+        <button id="removeFileBtn" class="btn btn-outline btn-sm">Remove</button>
+      </div>
+
+      <div class="action-bar">
+        <span class="hint">Automatic extraction of age limit, income criteria, documents &amp; official helpline</span>
+        <button id="analyzeBtn" class="btn btn-primary" disabled>Analyze Scheme with AI</button>
+      </div>
+    </section>
+
+    <!-- Analysis Section (Hidden until analyzed) -->
+    <div id="analysisSection" style="display:none">
+      <!-- Official Verification Bar -->
+      <div class="card official-card">
+        <div class="official-header">
+          <span class="badge badge-success">🛡️ Official Government Scheme Detected</span>
+          <span id="govLevelBadge" class="badge badge-gray">Central Government</span>
+        </div>
+        <div class="official-grid">
+          <div>
+            <div class="label">Nodal Department / Ministry</div>
+            <div id="dispDepartment" class="val">-</div>
+          </div>
+          <div>
+            <div class="label">Official Portal</div>
+            <div id="dispPortal" class="val">-</div>
+          </div>
+          <div>
+            <div class="label">Toll-Free Citizen Helpline</div>
+            <div id="dispHelpline" class="val">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scheme Overview Card -->
+      <section class="card">
+        <div class="card-header-flex">
+          <div>
+            <h2 id="dispSchemeName">Scheme Name</h2>
+            <div id="dispNativeName" class="native-title"></div>
+          </div>
+          <button id="readAloudBtn" class="btn btn-secondary btn-sm">🔊 Listen</button>
+        </div>
+
+        <div class="explanation-box">
+          <div class="exp-title">✨ Simplified 1-Minute Citizen Summary</div>
+          <p id="dispExplanation" class="exp-text">-</p>
+        </div>
+
+        <div class="summary-grid">
+          <div class="info-tile">
+            <h3>👥 Who Can Apply (Target Beneficiaries)</h3>
+            <ul id="dispBeneficiaries" class="check-list"></ul>
+          </div>
+          <div class="info-tile">
+            <h3>📋 Eligibility At A Glance</h3>
+            <div class="criteria-list">
+              <div><strong>Age:</strong> <span id="dispAge">-</span></div>
+              <div><strong>Income Ceiling:</strong> <span id="dispIncome">-</span></div>
+              <div><strong>Occupation / Role:</strong> <span id="dispOccupation">-</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits Section -->
+      <section class="card">
+        <h2>Scheme Benefits &amp; Financial Assistance</h2>
+        <div id="dispBenefits" class="benefits-grid"></div>
+      </section>
+
+      <!-- Eligibility Checker -->
+      <section class="card">
+        <h2>Interactive Eligibility Checker</h2>
+        <p class="subtext">Answer a few questions to see if you qualify before visiting the official portal</p>
+
+        <form id="eligibilityForm" class="checker-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="userAge">Your Age (Years) *</label>
+              <input type="number" id="userAge" min="0" max="120" value="28" required>
+            </div>
+            <div class="form-group">
+              <label for="userState">State / UT *</label>
+              <select id="userState">
+                <option value="All India">All India / Central Scheme</option>
+                <option value="Tamil Nadu" selected>Tamil Nadu</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Telangana">Telangana</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Delhi">Delhi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="userOccupation">Occupation / Current Role *</label>
+              <select id="userOccupation">
+                <option value="Farmer / Agricultural Worker">Farmer / Agricultural Worker</option>
+                <option value="Small Business Owner / MSME">Small Business Owner / MSME</option>
+                <option value="Daily Wage / Informal Worker">Daily Wage / Informal Worker</option>
+                <option value="Student / Youth">Student / Youth</option>
+                <option value="Homemaker">Homemaker</option>
+                <option value="Salaried Employee">Salaried Employee</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="userIncome">Annual Family Income (₹)</label>
+              <input type="number" id="userIncome" value="180000">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top:16px;">Check My Eligibility</button>
+        </form>
+
+        <!-- Eligibility Result Box -->
+        <div id="eligibilityResultBox" class="result-box" style="display:none">
+          <div id="verdictBadge" class="verdict-tag">Likely Eligible</div>
+          <h3 id="verdictTitle">Evaluation Title</h3>
+          <p id="verdictSummary" class="verdict-text">-</p>
+          <div class="disclaimer-banner">
+            <strong>Official Authority Disclaimer:</strong>
+            Final eligibility, biometric authentication, and financial disbursements are determined exclusively by authorized government nodal officers.
+          </div>
+        </div>
+      </section>
+
+      <!-- Required Documents -->
+      <section class="card">
+        <div class="card-header-flex">
+          <div>
+            <h2>Required Documents Checklist</h2>
+            <p class="subtext">Check off each document before applying</p>
+          </div>
+          <button id="printBtn" class="btn btn-outline btn-sm">🖨️ Print Checklist</button>
+        </div>
+        <div id="dispDocuments" class="documents-grid"></div>
+      </section>
+
+      <!-- Application Process Steps -->
+      <section class="card">
+        <h2>How to Apply (Step-by-Step)</h2>
+        <div id="dispSteps" class="steps-timeline"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Backend Endpoint Settings Modal -->
+  <div id="backendModal" class="modal-backdrop" style="display:none">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Backend API Configuration</h3>
+        <button id="closeBackendModal" class="modal-close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          When deployed to GitHub Pages (<code>https://YOUR-GITHUB-USERNAME.github.io/hackerarena-kirthick/</code>), 
+          enter your hosted AI backend API endpoint (e.g., Render, Railway, or Google AI Studio preview URL).
+        </p>
+        <div class="form-group">
+          <label for="customBackendInput">Backend API URL:</label>
+          <input type="url" id="customBackendInput" placeholder="https://your-backend.onrender.com" class="input-full">
+        </div>
+        <button id="saveBackendUrlBtn" class="btn btn-primary" style="width:100%;margin-top:12px">Save Backend URL</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <strong>SchemeGuide AI</strong> • Repository: <code>hackerarena-kirthick</code>
+      </div>
+      <div>
+        Built with Gemini AI • GitHub Pages Ready
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
